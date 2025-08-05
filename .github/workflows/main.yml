@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Download sing-box
         run: |
-          curl -L -o sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/latest/download/sing-box-linux-amd64.tar.gz
+          curl -L -o sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v1.9.0/sing-box-1.9.0-linux-amd64.tar.gz
           tar -xvzf sing-box.tar.gz
           chmod +x sing-box*/sing-box
           mv sing-box*/sing-box sing-box
@@ -25,19 +25,19 @@ jobs:
               "listen": "::",
               "listen_port": 443,
               "users": [{
-                "uuid": "11111111-1111-1111-1111-111111111111",
+                "uuid": "00000000-0000-0000-0000-000000000000",
                 "flow": "xtls-rprx-vision"
               }],
               "tls": {
                 "enabled": true,
-                "server_name": "zula.ir",
+                "server_name": "www.microsoft.com",
                 "reality": {
                   "enabled": true,
                   "handshake": {
-                    "server": "zula.ir",
+                    "server": "www.microsoft.com",
                     "server_port": 443
                   },
-                  "private_key": "U8fh-KbpQEGZaBkYow0emPbP1twkNDKpnlh47P1UQ3I",
+                  "private_key": "U8fh-KbpQEGZ1Aq4RoSl0_C9fCgZsy0PZ5rNQ38X2l8",
                   "short_id": ["12345678"]
                 }
               }
@@ -49,9 +49,8 @@ jobs:
 
       - name: Start VLESS Server
         run: |
-          nohup ./sing-box run -c config.json > output.log 2>&1 &
+          nohup ./sing-box run -c config.json &
 
       - name: Show VLESS Link
         run: |
-          echo "✅ Ваш ключ:"
-          echo "vless://11111111-1111-1111-1111-111111111111@your_server_ip:443?encryption=none&security=reality&sni=zula.ir&fp=chrome&type=grpc&serviceName=grpc&mode=gun#FreeTunnel"
+          echo 'vless://00000000-0000-0000-0000-000000000000@github.com:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.microsoft.com&fp=random&type=grpc&serviceName=443#FreeTunnel'
