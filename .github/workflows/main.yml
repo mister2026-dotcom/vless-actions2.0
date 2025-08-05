@@ -1,0 +1,57 @@
+name: Free VLESS Tunnel
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download sing-box
+        run: |
+          curl -L -o sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/latest/download/sing-box-linux-amd64.tar.gz
+          tar -xvzf sing-box.tar.gz
+          chmod +x sing-box*/sing-box
+          mv sing-box*/sing-box sing-box
+
+      - name: Create config.json
+        run: |
+          echo '{
+            "log": {
+              "level": "info"
+            },
+            "inbounds": [{
+              "type": "vless",
+              "listen": "::",
+              "listen_port": 443,
+              "users": [{
+                "uuid": "11111111-1111-1111-1111-111111111111",
+                "flow": "xtls-rprx-vision"
+              }],
+              "tls": {
+                "enabled": true,
+                "server_name": "zula.ir",
+                "reality": {
+                  "enabled": true,
+                  "handshake": {
+                    "server": "zula.ir",
+                    "server_port": 443
+                  },
+                  "private_key": "U8fh-KbpQEGZaBkYow0emPbP1twkNDKpnlh47P1UQ3I",
+                  "short_id": ["12345678"]
+                }
+              }
+            }],
+            "outbounds": [{
+              "type": "direct"
+            }]
+          }' > config.json
+
+      - name: Start VLESS Server
+        run: |
+          nohup ./sing-box run -c config.json > output.log 2>&1 &
+
+      - name: Show VLESS Link
+        run: |
+          echo "✅ Ваш ключ:"
+          echo "vless://11111111-1111-1111-1111-111111111111@your_server_ip:443?encryption=none&security=reality&sni=zula.ir&fp=chrome&type=grpc&serviceName=grpc&mode=gun#FreeTunnel"
